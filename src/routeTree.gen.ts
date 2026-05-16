@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as QuotationRouteImport } from './routes/quotation'
+import { Route as LetterpadRouteImport } from './routes/letterpad'
 import { Route as IndexRouteImport } from './routes/index'
 
 const QuotationRoute = QuotationRouteImport.update({
   id: '/quotation',
   path: '/quotation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LetterpadRoute = LetterpadRouteImport.update({
+  id: '/letterpad',
+  path: '/letterpad',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,27 +31,31 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/letterpad': typeof LetterpadRoute
   '/quotation': typeof QuotationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/letterpad': typeof LetterpadRoute
   '/quotation': typeof QuotationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/letterpad': typeof LetterpadRoute
   '/quotation': typeof QuotationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/quotation'
+  fullPaths: '/' | '/letterpad' | '/quotation'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/quotation'
-  id: '__root__' | '/' | '/quotation'
+  to: '/' | '/letterpad' | '/quotation'
+  id: '__root__' | '/' | '/letterpad' | '/quotation'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LetterpadRoute: typeof LetterpadRoute
   QuotationRoute: typeof QuotationRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/quotation'
       fullPath: '/quotation'
       preLoaderRoute: typeof QuotationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/letterpad': {
+      id: '/letterpad'
+      path: '/letterpad'
+      fullPath: '/letterpad'
+      preLoaderRoute: typeof LetterpadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LetterpadRoute: LetterpadRoute,
   QuotationRoute: QuotationRoute,
 }
 export const routeTree = rootRouteImport
