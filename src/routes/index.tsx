@@ -1,26 +1,49 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { FileSpreadsheet, FileText } from "lucide-react";
+import { COMPANY } from "@/lib/company";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  component: Home,
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
+function Home() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen flex flex-col bg-background">
+      <nav className="bg-navy text-navy-foreground">
+        <div className="mx-auto max-w-6xl flex items-center gap-3 px-6 py-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded bg-gold text-gold-foreground font-display font-bold">NIT</div>
+          <span className="font-display text-xl text-gold">{COMPANY.name}</span>
+        </div>
+      </nav>
+
+      <main className="flex-1 mx-auto max-w-6xl w-full px-6 py-16">
+        <div className="text-center mb-14">
+          <h1 className="font-display text-4xl md:text-5xl text-primary">{COMPANY.tagline}</h1>
+          <p className="mt-3 text-muted-foreground">Professional documents for your aggregate supply business.</p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          <Link to="/quotation" className="group rounded-xl border border-border bg-card p-8 shadow-sm hover:shadow-lg hover:border-accent transition-all">
+            <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-navy text-gold mb-5 group-hover:bg-gold group-hover:text-gold-foreground transition-colors">
+              <FileSpreadsheet className="!size-7" />
+            </div>
+            <h2 className="font-display text-2xl text-primary mb-2">Sale Quotation</h2>
+            <p className="text-sm text-muted-foreground">Generate professional quotations for aggregate supply with auto-calculated totals.</p>
+          </Link>
+
+          <Link to="/letterpad" className="group rounded-xl border border-border bg-card p-8 shadow-sm hover:shadow-lg hover:border-accent transition-all">
+            <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-navy text-gold mb-5 group-hover:bg-gold group-hover:text-gold-foreground transition-colors">
+              <FileText className="!size-7" />
+            </div>
+            <h2 className="font-display text-2xl text-primary mb-2">Letterpad</h2>
+            <p className="text-sm text-muted-foreground">Write and print official company letters on branded letterhead.</p>
+          </Link>
+        </div>
+      </main>
+
+      <footer className="bg-navy text-navy-foreground text-center text-xs py-3">
+        © {new Date().getFullYear()} {COMPANY.name} · {COMPANY.address}
+      </footer>
     </div>
   );
-}
-
-function Index() {
-  return <PlaceholderIndex />;
 }
