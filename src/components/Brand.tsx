@@ -1,14 +1,17 @@
 import { COMPANY } from '@/lib/company';
 
+const LOGO_URL =
+  'https://res.cloudinary.com/drvug594q/image/upload/v1778965819/Screenshot_2026-05-16_at_11.25.58_PM-removebg-preview_g89jwh.png';
+
 export function BrandHeader() {
   return (
     <header className="bg-navy text-navy-foreground print:bg-navy print:text-navy-foreground">
-      <div className="flex items-center gap-4 px-6 py-5">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md bg-gold text-gold-foreground font-display text-xl font-bold tracking-wider shadow">
-          NIT
+      <div className="flex items-center gap-0 px-6 py-5">
+        <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden bg-transparent -mr-3">
+          <img src={LOGO_URL} alt="NIT logo" className="h-full w-full object-contain block" />
         </div>
         <div className="flex-1 min-w-0">
-          <h1 className="font-display text-2xl leading-tight text-gold">{COMPANY.name}</h1>
+          <h1 className="font-display text-4xl leading-tight text-gold">{COMPANY.name}</h1>
           <p className="text-xs opacity-90 mt-0.5">{COMPANY.address}</p>
         </div>
         <div className="text-right text-xs leading-relaxed hidden sm:block">

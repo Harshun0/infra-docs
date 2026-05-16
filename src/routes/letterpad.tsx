@@ -49,19 +49,8 @@ function LetterpadPage() {
     else toast.success("Letter saved");
   }
 
-  async function printPdf() {
-    if (!printRef.current) return;
-    const html2pdf = (await import("html2pdf.js")).default;
-    html2pdf()
-      .set({
-        margin: 8,
-        filename: `Letter-${form.reference_no || Date.now()}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      })
-      .from(printRef.current)
-      .save();
+  function printPdf() {
+    window.print();
   }
 
   const tbBtn = "h-8 w-8 inline-flex items-center justify-center rounded hover:bg-accent/30";

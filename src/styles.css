@@ -57,10 +57,11 @@
   --input: oklch(0.9 0.015 255);
   --ring: oklch(0.78 0.13 80);
 
-  --navy: oklch(0.22 0.06 260);
-  --navy-foreground: oklch(0.98 0.005 250);
-  --gold: oklch(0.78 0.13 80);
-  --gold-foreground: oklch(0.22 0.06 260);
+  /* Softer premium palette: lighter navy and warmer gold to reduce heavy darkness */
+  --navy: #0b4f6c; /* softer premium navy */
+  --navy-foreground: #f8fafc; /* near-white text for contrast */
+  --gold: #C9A94F; /* warm gold */
+  --gold-foreground: #0b4f6c; /* navy text on gold */
 
   --font-display: 'Playfair Display', Georgia, serif;
 }
@@ -78,17 +79,89 @@
 
 /* Print styles */
 @media print {
-  @page { size: A4; margin: 12mm; }
+  @page { size: A4; margin: 8mm; }
   body { background: white !important; }
   .no-print { display: none !important; }
-  .print-area { box-shadow: none !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
-  input, textarea, [contenteditable] {
+  .print-area { box-shadow: none !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important; font-size: 10.5px !important; line-height: 1.25 !important; }
+  .print-area header,
+  .print-area footer {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    font-size: 11px !important;
+  }
+  /* Keep header/footer in normal flow so they do not repeat on every printed page */
+  .print-area header,
+  .print-area footer {
+    position: static !important;
+  }
+  /* Ensure content tries to stay on one page and doesn't overflow under header/footer */
+  .print-area .p-8 {
+    padding-top: 0.7rem !important;
+    padding-bottom: 0.7rem !important;
+  }
+  .print-area {
+    page-break-after: avoid !important;
+    page-break-before: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    overflow: visible !important;
+    max-height: calc(297mm - 16mm) !important;
+  }
+  .print-area table {
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+  }
+  .print-area tr,
+  .print-area pre,
+  .print-area blockquote {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  .print-area thead { display: table-header-group; }
+  .print-area tfoot { display: table-footer-group; }
+  .print-area table th,
+  .print-area table td {
+    padding: 0.3rem !important;
+  }
+  .print-area .text-2xl { font-size: 18px !important; }
+  .print-area .text-lg { font-size: 12px !important; }
+  .print-area .text-sm,
+  .print-area .text-xs,
+  .print-area .font-semibold,
+  .print-area .font-medium,
+  .print-area .font-display {
+    font-size: 10px !important;
+  }
+  .print-area .p-10 { padding: 0.8rem !important; }
+  .print-area .p-8 { padding: 0.7rem !important; }
+  .print-area .px-6 { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+  .print-area .py-5 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+  .print-area .space-y-6 > * + * { margin-top: 0.65rem !important; }
+  .print-area .space-y-2 > * + * { margin-top: 0.4rem !important; }
+  .print-area input,
+  .print-area textarea,
+  .print-area [contenteditable] {
     border: none !important;
     outline: none !important;
     background: transparent !important;
     box-shadow: none !important;
     resize: none !important;
+    font-size: inherit !important;
+    line-height: inherit !important;
   }
+  /* Reduce sizes further to help fit everything on a single printed page */
+  .print-area {
+    font-size: 9px !important;
+    line-height: 1.15 !important;
+  }
+  .print-area table th,
+  .print-area table td {
+    padding: 0.18rem !important;
+  }
+  .print-area .p-8 { padding: 0.45rem !important; }
+  .print-area .p-10 { padding: 0.6rem !important; }
+  .print-area .h-16 { height: 2rem !important; }
+  .print-area .h-14 { height: 2rem !important; width: 2rem !important; }
 }
 
 /* Tiptap editor */

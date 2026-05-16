@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { FileSpreadsheet, FileText } from "lucide-react";
 import { COMPANY } from "@/lib/company";
 
+const LOGO_URL = 'https://res.cloudinary.com/drvug594q/image/upload/v1778965819/Screenshot_2026-05-16_at_11.25.58_PM-removebg-preview_g89jwh.png';
+
 export const Route = createFileRoute("/")({
   component: Home,
 });
@@ -11,7 +13,9 @@ function Home() {
     <div className="min-h-screen flex flex-col bg-background">
       <nav className="bg-navy text-navy-foreground">
         <div className="mx-auto max-w-6xl flex items-center gap-3 px-6 py-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded bg-gold text-gold-foreground font-display font-bold">NIT</div>
+          <div className="flex h-14 w-14 items-center justify-center rounded overflow-hidden">
+            <img src={LOGO_URL} alt="NIT" className="h-full w-full object-contain" />
+          </div>
           <span className="font-display text-xl text-gold">{COMPANY.name}</span>
         </div>
       </nav>

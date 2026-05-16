@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { formatINR, amountInWords } from "@/lib/format";
+import { formatINR } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -52,12 +52,8 @@ function QuotationPage() {
     quotation_date: new Date().toISOString().slice(0, 10),
     receiver_name: "",
     receiver_address: "",
-    consignee_name: "",
-    consignee_address: "",
     customer_gst: "",
     customer_pan: "",
-    sales_executive: "",
-    contact_no: "",
   });
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -76,8 +72,6 @@ function QuotationPage() {
   const nonGstItems = items.filter((i) => !i.isGstPercent);
   const subtotal = nonGstItems.reduce((s, i) => s + calcRowAmount(i, 0), 0);
   const gstItem = items.find((i) => i.isGstPercent);
-  const gstAmount = gstItem ? calcRowAmount(gstItem, subtotal) : 0;
-  const grandTotal = subtotal + gstAmount;
 
   function updateItem(idx: number, patch: Partial<LineItem>) {
     setItems((prev) => prev.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
@@ -95,33 +89,17 @@ function QuotationPage() {
       quotation_date: form.quotation_date,
       receiver_name: form.receiver_name,
       receiver_address: form.receiver_address,
-      consignee_name: form.consignee_name,
-      consignee_address: form.consignee_address,
       customer_gst: form.customer_gst,
       customer_pan: form.customer_pan,
-      sales_executive: form.sales_executive,
-      contact_no: form.contact_no,
       line_items: items,
       terms,
-      grand_total: grandTotal,
     });
     if (error) toast.error("Save failed: " + error.message);
     else toast.success("Quotation saved");
   }
 
-  async function printPdf() {
-    if (!printRef.current) return;
-    const html2pdf = (await import("html2pdf.js")).default;
-    html2pdf()
-      .set({
-        margin: 8,
-        filename: `Quotation-${quotationNo}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      })
-      .from(printRef.current)
-      .save();
+  function printPdf() {
+    window.print();
   }
 
   return (
@@ -145,7 +123,7 @@ function QuotationPage() {
           <div className="flex justify-between items-start border-b border-border pb-4">
             <h2 className="font-display text-2xl text-primary">SALE QUOTATION</h2>
             <div className="text-right text-sm">
-              <div className="flex gap-2 items-center justify-end mb-1">
+              <div className="flex gap-2 items-center justify-end mb-1 no-print">
                 <Label className="text-muted-foreground">Quotation No:</Label>
                 <Input type="number" value={quotationNo} onChange={(e) => setQuotationNo(Number(e.target.value))} className="h-8 w-24 text-right" />
               </div>
@@ -156,24 +134,13 @@ function QuotationPage() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-accent-foreground bg-accent/20 px-2 py-1 rounded">Bill To</h3>
-              <Input placeholder="Receiver Name" value={form.receiver_name} onChange={(e) => setForm({ ...form, receiver_name: e.target.value })} />
-              <Textarea placeholder="Receiver Address" value={form.receiver_address} onChange={(e) => setForm({ ...form, receiver_address: e.target.value })} rows={2} />
-              <div className="grid grid-cols-2 gap-2">
-                <Input placeholder="Customer GST" value={form.customer_gst} onChange={(e) => setForm({ ...form, customer_gst: e.target.value })} />
-                <Input placeholder="Customer PAN" value={form.customer_pan} onChange={(e) => setForm({ ...form, customer_pan: e.target.value })} />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-accent-foreground bg-accent/20 px-2 py-1 rounded">Ship To / Consignee</h3>
-              <Input placeholder="Consignee Name" value={form.consignee_name} onChange={(e) => setForm({ ...form, consignee_name: e.target.value })} />
-              <Textarea placeholder="Consignee Address" value={form.consignee_address} onChange={(e) => setForm({ ...form, consignee_address: e.target.value })} rows={2} />
-              <div className="grid grid-cols-2 gap-2">
-                <Input placeholder="Sales Executive" value={form.sales_executive} onChange={(e) => setForm({ ...form, sales_executive: e.target.value })} />
-                <Input placeholder="Contact No" value={form.contact_no} onChange={(e) => setForm({ ...form, contact_no: e.target.value })} />
-              </div>
+          <div className="space-y-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-accent-foreground bg-accent/20 px-2 py-1 rounded">Bill To</h3>
+            <Input placeholder="Receiver Name" value={form.receiver_name} onChange={(e) => setForm({ ...form, receiver_name: e.target.value })} />
+            <Textarea placeholder="Receiver Address" value={form.receiver_address} onChange={(e) => setForm({ ...form, receiver_address: e.target.value })} rows={2} />
+            <div className="grid grid-cols-2 gap-2">
+              <Input placeholder="Customer GST" value={form.customer_gst} onChange={(e) => setForm({ ...form, customer_gst: e.target.value })} />
+              <Input placeholder="Customer PAN" value={form.customer_pan} onChange={(e) => setForm({ ...form, customer_pan: e.target.value })} />
             </div>
           </div>
 
@@ -220,25 +187,10 @@ function QuotationPage() {
                   );
                 })}
               </tbody>
-              <tfoot>
-                <tr className="border-t border-border bg-muted/40">
-                  <td colSpan={6} className="px-3 py-2 text-right font-medium">Sub Total</td>
-                  <td className="px-3 py-2 text-right tabular-nums font-medium">{formatINR(subtotal)}</td>
-                  <td className="no-print" />
-                </tr>
-              </tfoot>
             </table>
             <div className="no-print p-2 border-t bg-muted/20">
               <Button variant="outline" size="sm" onClick={addRow}><Plus /> Add Row</Button>
             </div>
-          </div>
-
-          <div className="bg-gold text-gold-foreground rounded p-4 flex justify-between items-center">
-            <div>
-              <div className="text-xs uppercase tracking-wider opacity-80">Grand Total</div>
-              <div className="text-xs mt-1 italic max-w-md">{amountInWords(grandTotal)}</div>
-            </div>
-            <div className="font-display text-3xl font-bold tabular-nums">{formatINR(grandTotal)}</div>
           </div>
 
           <div>
